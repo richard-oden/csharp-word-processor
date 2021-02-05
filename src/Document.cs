@@ -9,8 +9,7 @@ namespace WordProcessor
         public string Title {get; private set;}
         public string Author {get; private set;}
         public DateTime CreationDate {get; private set;}
-        public Dictionary<DateTime, string> EditHistory {get; protected set;} = new Dictionary<DateTime, string>();
-        public string Body {get; private set;}
+        public string Body {get; set;}
 
         public Document(string title, string author, DateTime? creationDate = null, string body = "")
         {
@@ -38,16 +37,25 @@ namespace WordProcessor
             return new Document(title, author);
         }
 
-        public void AddChar(char charToAdd)
+        public string[] GetLines(int lineLength)
         {
-            EditHistory.Add(DateTime.Now, Body);
-            Body += charToAdd;
-        }
-
-        public void RemoveChar()
-        {
-            EditHistory.Add(DateTime.Now, Body);
-            Body = Body.Remove(Body.Length-1, 1);
+            string[] paragraphs = Body.Split('\n');
+            var lines = new List<string>();
+            foreach (var p in paragraphs)
+            {
+                if (p.Length > lineLength)
+                {
+                    for (int i = 0; i < p.Length; i+= lineLength)
+                    {
+                        lines.Add(p.Substring(i, Math.Min(lineLength, p.Length-i)));
+                    }
+                }
+                else
+                {
+                    lines.Add(p);
+                }
+            }
+            return lines.ToArray();
         }
     }
 }
