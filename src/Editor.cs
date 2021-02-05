@@ -160,18 +160,33 @@ namespace WordProcessor
             }
         }
 
-        private void addChar(char charToAdd, Position cursor)
+        private void addString(string stringToAdd, string[] lines, Position cursor)
         {
+            //Add copy of body before change:
             _editHistory.Add(DateTime.Now, _docToEdit.Body);
-            _docToEdit.Body += charToAdd;
+            //Insert added string to lines array at location:
+            lines[toBodyCoord(cursor.Y)] = lines[toBodyCoord(cursor.Y)].Insert(toBodyCoord(cursor.X), stringToAdd);
+            //Join lines array to string and reassign back to body:
+            _docToEdit.LinesToBody(lines, _windowWidth - 4);
+            //Recreate lines array from body:
+            lines = _docToEdit.GetLines(_windowWidth - 4);
+            //Move cursor right based on length of added string:
+            for (int i = 0; i < stringToAdd.Length; i++) moveCursor(cursor, "right", lines);
         }
 
-        private void removeChar(Position cursor)
+        private void removeString(int stringLength, string[] lines, Position cursor)
         {
-            if (_docToEdit.Body.Length > 1)
+            // If body has at least 1 character and location is within lines array:
+            if (_docToEdit.Body.Length >= stringLength && bodyContainsCoords(lines, cursor))
             {
+                //Add copy of body before change:
                 _editHistory.Add(DateTime.Now, _docToEdit.Body);
-                _docToEdit.Body = _docToEdit.Body.Remove(_docToEdit.Body.Length-1, 1);
+                //Remove string at cursor:
+                lines[toBodyCoord(cursor.Y)] = lines[toBodyCoord(cursor.Y)].Remove(toBodyCoord(cursor.X), stringLength);
+                //Join lines array to string and reassign back to body:
+                _docToEdit.LinesToBody(lines, _windowWidth - 4);
+                //Recreate lines array from body:
+                lines = _docToEdit.GetLines(_windowWidth - 4);
             }
         }
 
@@ -189,15 +204,19 @@ namespace WordProcessor
                     break;
 
                 case ConsoleKey.Backspace: 
-                    removeChar(cursor); 
+                    moveCursor(cursor, "left", lines);
+                    removeString(1, lines, cursor); 
+                    break;
+                case ConsoleKey.Delete:
+                    removeString(1, lines, cursor);
                     break;
 
                 case ConsoleKey.Enter: 
-                    addChar('\n', cursor); 
+                    addString("\n", lines, cursor); 
                     break;
 
                 default: 
-                    addChar(input.KeyChar, cursor); 
+                    addString(input.KeyChar.ToString(), lines, cursor); 
                     break;
             }
         }

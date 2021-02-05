@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static WordProcessor.ExtensionsAndHelpers;
 
 namespace WordProcessor
@@ -56,6 +57,12 @@ namespace WordProcessor
                 }
             }
             return lines.ToArray();
+        }
+
+        public void LinesToBody(string[] lines, int lineLength)
+        {
+            var linesWithNewLineChars = lines.Select(l => l.Length < lineLength ? l + '\n' : l);
+            Body = String.Join("", linesWithNewLineChars);
         }
     }
 }
