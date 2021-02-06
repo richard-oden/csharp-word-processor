@@ -38,7 +38,7 @@ namespace WordProcessor
             return new Document(title, author);
         }
 
-        public string[] GetLines(int lineLength)
+        public List<string> GetLines(int lineLength)
         {
             string[] paragraphs = Body.Split('\n');
             var lines = new List<string>();
@@ -56,12 +56,12 @@ namespace WordProcessor
                     lines.Add(p);
                 }
             }
-            return lines.ToArray();
+            return lines;
         }
 
-        public void LinesToBody(string[] lines, int lineLength)
+        public void LinesToBody(List<string> lines, int lineLength)
         {
-            var linesWithNewLineChars = lines.Select(l => l.Length < lineLength ? l + '\n' : l);
+            var linesWithNewLineChars = lines.Select(l => l.Length < lineLength && lines.IndexOf(l) < lines.Count - 1 ? l + '\n' : l);
             Body = String.Join("", linesWithNewLineChars);
         }
     }
