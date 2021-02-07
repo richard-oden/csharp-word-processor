@@ -251,6 +251,7 @@ namespace WordProcessor
                     moveCursor("left", lines);
                     removeChar(lines); 
                     break;
+
                 case ConsoleKey.Delete:
                     removeChar(lines);
                     break;
@@ -263,9 +264,24 @@ namespace WordProcessor
                     addString("\n", lines); 
                     break;
                 
+                case ConsoleKey.O when input.Modifiers == ConsoleModifiers.Control:
+                    _docToEdit = FileHandler.Open(PromptLineLoop($"Enter file to open (including file path):", FileHandler.IsValidFilePath));
+                    Console.ReadKey();
+                    break;
+
+                case ConsoleKey.S when input.Modifiers == (ConsoleModifiers.Shift | ConsoleModifiers.Control):
+                    FileHandler.Save(_docToEdit, PromptLineLoop($"Enter directory to save {_docToEdit.Title}.txt to:", FileHandler.IsValidDirectory));
+                    break;
+
+                case ConsoleKey.S when input.Modifiers == ConsoleModifiers.Control:
+                    FileHandler.Save(_docToEdit);
+                    Console.ReadKey();
+                    break;
+                
                 case ConsoleKey.Z when input.Modifiers == ConsoleModifiers.Control:
                     undo(lines);
                     break;
+
                 case ConsoleKey.Y when input.Modifiers == ConsoleModifiers.Control:
                     redo(lines);
                     break;

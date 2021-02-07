@@ -117,6 +117,11 @@ namespace WordProcessor
             return Console.ReadKey(true).Key;
         }
 
+        public static bool isYOrN (string input)
+        {
+            return new string[] {"y", "n"}.Contains(input.ToLower());
+        }
+
         public static string PromptLineLoop(string prompt, Func<string, bool> validator)
         {
             string output = null;
